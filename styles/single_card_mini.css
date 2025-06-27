@@ -1,0 +1,50 @@
+.pokemon_card_mini {
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-radius: 5px;
+    width: 280px;
+    text-transform: uppercase;
+}
+
+.card_header {
+    background-color: rgb(1, 59, 80);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px 8px;
+}
+
+.image_container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background-color: green;
+    height: 250px;
+    padding: 8px 16px;
+    transition: box-shadow 0.3s ease;
+}
+
+.pokemon_card_mini:hover .image_container {
+    box-shadow:
+        inset 0 10px 16px 4px rgba(255, 255, 255, 0.9),   /* starker Schein von oben */
+        inset 6px 0 12px 2px rgba(255, 255, 255, 0.4),    /* mittel von links */
+        inset -6px 0 12px 2px rgba(255, 255, 255, 0.4);   /* mittel von rechts */
+}
+
+.card_image_mini {
+    filter: drop-shadow(4px 4px 6px rgba(0, 0, 0, 0.9));
+    transition: filter 0.3s ease;
+    height: 216px;
+}
+
+.image_container:hover .card_image_mini {
+    filter: drop-shadow(8px 8px 5px rgba(0, 0, 0, 1));
+}
+
+.type_area {
+    background-color: rgb(1, 59, 80);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+}

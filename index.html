@@ -8,9 +8,49 @@
     <link rel="stylesheet" href="styles/assets.css">
     <link rel="stylesheet" href="styles/fonts.css">
     <link rel="stylesheet" href="styles/standard.css">
+    <link rel="stylesheet" href="styles/single_card_mini.css">
 </head>
-<body>
-    
+<body onload="fetchAndDisplayPokemon()">
+    <header>
+        <div class="pokemon_icon_plus_name">
+            <img class="pokeball_icon" src="assets/icons/pokeball_icon.png" alt="pokeball_icon">
+            <h1>My Pokédex</h1>
+        </div>
+        <div class="search_bar_container">
+            <span class="search_icon">🔍</span>
+            <input class="search_bar" type="text" placeholder="Find your Pokémon!">
+        </div>
+    </header>
+
+    <div id="content_container" class="content_container">
+
+    <!-- <div class="pokemon_card_mini">
+
+        <div class="card_header">
+            <div class="pokemon_id">
+                #1
+            </div>
+            <div class="pokemon_name">
+                Bulbasaur
+            </div>
+        </div>
+
+        <div class="image_container">
+            <img class="card_image_mini" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg" alt="pokemon">
+        </div>
+
+        <div class="type_area">
+            <img class="type_icon" src="assets/icons/grass.svg" alt="grass">
+        </div>
+    </div> -->
+
+
+
+    </div> <!-- gehört zum Content-Container -->
+    <button onclick="loadNextPokemon()">next please</button>
+    <footer>
+
+    </footer>
 </body>
 <script src="script.js"></script>
 <script src="scripts/templates.js"></script>

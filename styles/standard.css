@@ -2,6 +2,8 @@
     margin: 0;
     box-sizing: border-box;
     scroll-behavior: smooth;
+    font-family: 'Roboto';
+    color: white;
 }
 
 .d_none {

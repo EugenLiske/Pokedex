@@ -1,0 +1,36 @@
+header {
+    background-color: rgb(1, 59, 80);
+    padding: 56px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pokemon_icon_plus_name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content_container {
+    padding: 64px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 32px;
+    background-color: rgb(0, 99, 104);
+}
+
+.img_container {
+    background-color: rgb(5,23,30);
+    min-height: calc(100vh - 280px);
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 32px;
+}
