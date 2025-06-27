@@ -7,6 +7,28 @@
   src: url('../assets/fonts/roboto-v48-latin/roboto-v48-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
+.headline_container {
+  position: relative;
+  display: inline-block;
+}
+
+.headline_stroke {
+  color: transparent;
+  -webkit-text-stroke: 4px #000000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  letter-spacing: 1px;
+}
+
+.headline_text_filling {
+  color: white;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 1px;
+}
+
 h1 {
   font-size: 36px;
 }

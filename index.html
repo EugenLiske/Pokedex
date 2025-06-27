@@ -9,12 +9,16 @@
     <link rel="stylesheet" href="styles/fonts.css">
     <link rel="stylesheet" href="styles/standard.css">
     <link rel="stylesheet" href="styles/single_card_mini.css">
+    <link rel="stylesheet" href="styles/card_bg_color.css">
 </head>
-<body onload="fetchAndDisplayPokemon()">
+<body onload="loadPokemon()">
     <header>
         <div class="pokemon_icon_plus_name">
             <img class="pokeball_icon" src="assets/icons/pokeball_icon.png" alt="pokeball_icon">
-            <h1>My Pokédex</h1>
+            <h1 class="headline_container">
+                <span class="headline_stroke">My Pokédex</span>
+                <span class="headline_text_filling">My Pokédex</span>
+            </h1>
         </div>
         <div class="search_bar_container">
             <span class="search_icon">🔍</span>
@@ -22,32 +26,13 @@
         </div>
     </header>
 
-    <div id="content_container" class="content_container">
-
-    <!-- <div class="pokemon_card_mini">
-
-        <div class="card_header">
-            <div class="pokemon_id">
-                #1
-            </div>
-            <div class="pokemon_name">
-                Bulbasaur
-            </div>
+        <div id="content_container" class="content_container">
         </div>
 
-        <div class="image_container">
-            <img class="card_image_mini" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg" alt="pokemon">
+        <div class="load_pokemon_button_container" id="load_pokemon_button_container">
+            <button class="load_pokemon_button" onclick="loadPokemon()">Load More Pokémon</button>
         </div>
 
-        <div class="type_area">
-            <img class="type_icon" src="assets/icons/grass.svg" alt="grass">
-        </div>
-    </div> -->
-
-
-
-    </div> <!-- gehört zum Content-Container -->
-    <button onclick="loadNextPokemon()">next please</button>
     <footer>
 
     </footer>

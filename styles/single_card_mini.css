@@ -18,7 +18,6 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    background-color: green;
     height: 250px;
     padding: 8px 16px;
     transition: box-shadow 0.3s ease;
@@ -46,5 +45,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 32px;
     padding: 8px 16px;
 }

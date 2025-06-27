@@ -1,7 +1,13 @@
-/* Icon im Header */
+/* Icon und Titel im Header */
 
 .pokeball_icon {
     height: 64px;
+}
+
+.pokemon_icon_plus_name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 /* Suchleiste oben rechts */
@@ -35,7 +41,7 @@
 
 .search_bar:focus {
     outline: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
 }
 
 /* Typ-Icon in der Minikarte */
@@ -43,4 +49,34 @@
 .type_icon {
     height: 56px;
     filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 1));
+}
+
+/* Pokemon-Lade-Button nach den ersten 20 Pokemon */
+
+.load_pokemon_button_container {
+    background-color: rgb(0, 99, 104);
+    display: flex;
+    justify-content: center;
+    padding-bottom: 64px;
+}
+
+.load_pokemon_button_container_after_loading {
+    padding-bottom: 0;
+}
+
+.load_pokemon_button {
+    background-color: rgb(228, 31, 37);       /* Pokéball-Rot */
+    color: white;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 999px;                    /* Voll abgerundet */
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.load_pokemon_button:hover {
+    background-color: rgb(228, 31, 27);      /* dunkleres Rot bei Hover */
+    transform: scale(1.05);                  /* leichtes "Pop" beim Hover */
 }
