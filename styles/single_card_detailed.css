@@ -1,0 +1,133 @@
+.overlay {
+    background-color: rgba(0, 0, 0, 0.375);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+body.no_scroll {
+    overflow: hidden;
+}
+
+.pokemon_card_detailed {
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-radius: 5px;
+    width: 500px;
+}
+
+.card_header_detailed {
+    background-color: rgb(1, 59, 80);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px 8px;
+    text-transform: uppercase;
+}
+
+.image_container_detailed {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 300px;
+    padding: 8px 16px;
+    transition: box-shadow 0.3s ease;
+}
+
+.card_image_detailed {
+    filter: drop-shadow(6px 6px 4px rgba(0, 0, 0, 0.9));
+    transition: filter 0.3s ease;
+    height: 270px;
+}
+
+.pokemon_card_detailed:hover .image_container_detailed {
+    box-shadow:
+        inset 0 10px 16px 4px rgba(255, 255, 255, 0.9),   /* starker Schein von oben */
+        inset 6px 0 12px 2px rgba(255, 255, 255, 0.4),    /* mittel von links */
+        inset -6px 0 12px 2px rgba(255, 255, 255, 0.4);   /* mittel von rechts */
+}
+
+.pokemon_card_detailed:hover .card_image_detailed {
+    filter: drop-shadow(8px 8px 5px rgba(0, 0, 0, 1));
+}
+
+.type_area_detailed {
+    background-color: rgb(1, 59, 80);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    padding: 8px 16px;
+}
+
+.detailed_information_header {
+    background-color: rgb(0, 99, 104);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 48px;
+    text-transform: uppercase;
+}
+
+.separator {
+    background-color: rgb(1, 59, 80);
+    width: 3px;
+    height: 60px;
+}
+
+.detailed_information_content_container {
+    background-color: rgb(1, 59, 80);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.info_row_mainstats {
+    display: flex;
+}
+
+.info_label_mainstats {
+    font-weight: normal;        /* <- macht Schrift nicht fett */
+    width: 200px;               /* <- sorgt dafür, dass alle Werte auf gleicher Höhe starten */
+    text-align: left;          /* <- optional, sorgt für Ausrichtung rechts */
+}
+
+.info_value_mainstats {
+    text-align: left;           /* <- linksbündig */
+}
+
+.info_row_detailled_stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info_label_detailled_stats {
+    width: 130px;
+    text-align: right;
+    font-weight: normal;
+    padding-right: 8px;
+    text-align: left;
+}
+
+.bar_wrapper_detailled_stats {
+    flex: 1;
+    background-color: #e5e5e5;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+.bar_fill_detailled_stats {
+    height: 100%;
+    background-color: rgb(228, 31, 37);
+    transition: width 0.3s ease;
+}

@@ -51,6 +51,13 @@
     filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 1));
 }
 
+/* Typ-Icon in der Großansicht */
+
+.type_icon_detailed {
+    height: 48px;
+    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 1));
+}
+
 /* Pokemon-Lade-Button nach den ersten 20 Pokemon */
 
 .load_pokemon_button_container {
