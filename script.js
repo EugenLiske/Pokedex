@@ -76,11 +76,11 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
         </div>
 
         <div class="detailed_information_header">
-            <div onclick="renderMainStats()">main</div>
+            <div class="more_stats_button" onclick="renderMainStats(${pokemonIndex})">main</div>
             <div class="separator"></div>
-            <div onclick="renderDetailedStats()">stats</div>
+            <div class="more_stats_button" onclick="renderDetailedStats(${pokemonIndex})">stats</div>
             <div class="separator"></div>
-            <div onclick="renderEvoChain()">evo chain</div>
+            <div class="more_stats_button" onclick="renderEvoChain()">evo chain</div>
         </div>
 
         <div class="detailed_information_content_container" id="detailed_information_content_container">
@@ -100,49 +100,73 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
                 <span class="info_label_mainstats">Abilities:</span>
                 <span class="info_value_mainstats">${abilitiesHTML}</span>
             </div>
-
-
-             <div class="info_row_detailled_stats">
-                 <span class="info_label_detailled_stats">HP</span>
-                 <div class="bar_wrapper_detailled_stats">
-                     <div id="hp_value" class="bar_fill_detailled_stats" style="width: 39%"></div>
-                 </div>
-             </div>
-             <div class="info_row_detailled_stats">
-                 <span class="info_label_detailled_stats">Attack</span>
-                 <div class="bar_wrapper_detailled_stats">
-                     <div id="attack_value" class="bar_fill_detailled_stats" style="width: 52%"></div>
-                 </div>
-             </div>
-             <div class="info_row_detailled_stats">
-                 <span class="info_label_detailled_stats">Defense</span>
-                 <div class="bar_wrapper_detailled_stats">
-                     <div id="defense_value" class="bar_fill_detailled_stats" style="width: 43%"></div>
-                 </div>
-             </div>
-             <div class="info_row_detailled_stats">
-                 <span class="info_label_detailled_stats">Special-Attack</span>
-                 <div class="bar_wrapper_detailled_stats">
-                     <div id="special_attack_value" class="bar_fill_detailled_stats" style="width: 60%"></div>
-                 </div>
-             </div>
-             <div class="info_row_detailled_stats">
-                 <span class="info_label_detailled_stats">Special-Defense</span>
-                 <div class="bar_wrapper_detailled_stats">
-                     <div id="special_defense_value" class="bar_fill_detailled_stats" style="width: 50%"></div>
-                 </div>
-             </div>
-             <div class="info_row_detailled_stats">
-                 <span class="info_label_detailled_stats">Speed</span>
-                 <div class="bar_wrapper_detailled_stats">
-                     <div id="speed_value" class="bar_fill_detailled_stats" style="width: 65%"></div>
-                 </div>
-             </div>
-
-
         </div>
     </div>
     `
+}
+
+async function renderMainStats(pokemonIndex){
+    let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
+    let pokemonResponseAsJson = await pokemonResponse.json();
+
+    let pokemonAbilities = pokemonResponseAsJson.abilities;
+    let abilitiesArray = []; // Array als Zwischenlösung notwendig, damit .join funktioniert
+
+    for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
+        let abilityName = pokemonAbilities[abilityIndex].ability.name;
+        abilitiesArray.push(abilityName);
+    }
+
+    let abilitiesHTML = abilitiesArray.join(", ");
+
+    let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
+    detailedInformationContentContainer.innerHTML = `
+        <div class="info_row_mainstats">
+            <span class="info_label_mainstats">Height:</span>
+            <span class="info_value_mainstats">${pokemonResponseAsJson.height} m</span>
+        </div>
+        <div class="info_row_mainstats">
+            <span class="info_label_mainstats">Weight:</span>
+            <span class="info_value_mainstats">${pokemonResponseAsJson.weight} kg</span>
+        </div>
+        <div class="info_row_mainstats">
+            <span class="info_label_mainstats">Base Experience:</span>
+            <span class="info_value_mainstats">${pokemonResponseAsJson.base_experience} xp</span>
+        </div>
+        <div class="info_row_mainstats">
+            <span class="info_label_mainstats">Abilities:</span>
+            <span class="info_value_mainstats">${abilitiesHTML}</span>
+        </div>
+    `
+
+}
+
+async function renderDetailedStats(pokemonIndex){
+    const MAX_STAT_VALUE = 255;
+
+    let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
+    let pokemonResponseAsJson = await pokemonResponse.json();
+    let pokemonStats = pokemonResponseAsJson.stats;
+
+    let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
+    let statsHTML = '';
+
+    for (let statsIndex = 0; statsIndex < pokemonStats.length; statsIndex++) {
+        let statName = pokemonStats[statsIndex].stat.name;
+        let statValue = pokemonStats[statsIndex].base_stat;
+        let widthPercent = (statValue / MAX_STAT_VALUE) * 100;
+
+        statsHTML += `
+            <div class="info_row_detailled_stats">
+                <span class="info_label_detailled_stats">${statName}</span>
+                <div class="bar_wrapper_detailled_stats">
+                    <div class="bar_fill_detailled_stats" style="width: ${widthPercent}%"></div>
+                </div>
+            </div>
+        `
+    }
+
+    detailedInformationContentContainer.innerHTML = statsHTML;
 }
 
 function adjustImageSizeDetailedView(pokemonIndex){
@@ -237,6 +261,9 @@ function adjustImageSizeDetailedView(pokemonIndex){
     //         </div> -->
     //     </div>
     // </div>
+
+
+// Overlay schließen  
 
 function onOverlayClick(event) {
     const overlay = document.getElementById('overlay');

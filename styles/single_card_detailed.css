@@ -72,6 +72,19 @@ body.no_scroll {
     text-transform: uppercase;
 }
 
+.more_stats_button {
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.more_stats_button:hover {
+    color: rgb(228, 31, 37);           /* Pokémon-Rot */
+    font-weight: 600;                  /* etwas fetter */
+    border-bottom: 6px solid rgb(228, 31, 37); /* rote Linie unten */
+    padding-bottom: 6px;               /* leicht hochgeschoben */
+}
+
 .separator {
     background-color: rgb(1, 59, 80);
     width: 3px;
@@ -86,6 +99,7 @@ body.no_scroll {
     padding: 24px;
     font-family: sans-serif;
     font-size: 16px;
+    height: 242px;
 }
 
 .info_row_mainstats {
