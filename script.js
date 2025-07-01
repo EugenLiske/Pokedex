@@ -1,6 +1,8 @@
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
+const BASE_URL_EVO_CHAIN = "https://pokeapi.co/api/v2/pokemon-species/";
 let currentPokemonIndex = 1;
 let amountOfLoadedPokemon = 20;
+let shownPokemonNamesArray = [];
 
 function loadPokemon(){
     let start = currentPokemonIndex;
@@ -11,7 +13,6 @@ function loadPokemon(){
     currentPokemonIndex = currentPokemonIndex + amountOfLoadedPokemon;
 }
 
-
 async function fetchAndDisplayPokemon(start, end){
     let contentContainer = document.getElementById('content_container');
 
@@ -21,6 +22,10 @@ async function fetchAndDisplayPokemon(start, end){
         let pokemonResponseAsJson = await pokemonResponse.json();
 
         contentContainer.innerHTML += createMinicardTemplate(pokemonResponseAsJson, pokemonIndex);
+
+        // Hilfestellung für die Suchfunktion bzw. Schaffung der Grundlage
+
+        shownPokemonNamesArray.push(`${pokemonResponseAsJson.name}`);
     }
 }
 
@@ -34,149 +39,51 @@ async function renderDetailedCardView(pokemonIndex){
     let pokemonResponseAsJson = await pokemonResponse.json();
 
     overlay.innerHTML = renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex);
-
 }
 
-function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
-    // Rendern der Typ-Icons
-    let pokemonTypes = pokemonResponseAsJson.types;
-    let typeIconsHTML = '';
-
-    for (let typeIndex = 0; typeIndex < pokemonTypes.length; typeIndex++) {
-        let typeName = pokemonTypes[typeIndex].type.name;
-        typeIconsHTML += `<img class="type_icon_detailed" src="assets/icons/${typeName}.svg" alt="${typeName}">`
-    }
-
-    // Rendern der Fähigkeiten
-    let pokemonAbilities = pokemonResponseAsJson.abilities;
-    let abilitiesArray = []; // Array als Zwischenlösung notwendig, damit .join funktioniert
-
-    for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
-        let abilityName = pokemonAbilities[abilityIndex].ability.name;
-        abilitiesArray.push(abilityName);
-    }
-    let abilitiesHTML = abilitiesArray.join(", ");
-
-    return `
-        <div class="pokemon_card_detailed">
-            <div class="card_header_detailed">
-                <div class="pokemon_id">
-                    # ${pokemonResponseAsJson.id}
-                </div>
-                <div class="pokemon_name">
-                    ${pokemonResponseAsJson.name}
-                </div>
-            </div>
-
-        <div class="image_container_detailed ${pokemonResponseAsJson.types[0].type.name}">
-            <img onload="adjustImageSizeDetailedView(${pokemonIndex})" id="card_image_detailed_${pokemonIndex}" class="card_image_detailed" src="${pokemonResponseAsJson.sprites.other.dream_world.front_default}" alt="${pokemonResponseAsJson.name}">
-        </div>
-        <div id="type_area_detailed_${pokemonIndex}" class="type_area_detailed">
-            ${typeIconsHTML}
-        </div>
-
-        <div class="detailed_information_header">
-            <div class="more_stats_button" onclick="renderMainStats(${pokemonIndex})">main</div>
-            <div class="separator"></div>
-            <div class="more_stats_button" onclick="renderDetailedStats(${pokemonIndex})">stats</div>
-            <div class="separator"></div>
-            <div class="more_stats_button" onclick="renderEvoChain()">evo chain</div>
-        </div>
-
-        <div class="detailed_information_content_container" id="detailed_information_content_container">
-            <div class="info_row_mainstats">
-                <span class="info_label_mainstats">Height:</span>
-                <span class="info_value_mainstats">${pokemonResponseAsJson.height} m</span>
-            </div>
-            <div class="info_row_mainstats">
-                <span class="info_label_mainstats">Weight:</span>
-                <span class="info_value_mainstats">${pokemonResponseAsJson.weight} kg</span>
-            </div>
-            <div class="info_row_mainstats">
-                <span class="info_label_mainstats">Base Experience:</span>
-                <span class="info_value_mainstats">${pokemonResponseAsJson.base_experience} xp</span>
-            </div>
-            <div class="info_row_mainstats">
-                <span class="info_label_mainstats">Abilities:</span>
-                <span class="info_value_mainstats">${abilitiesHTML}</span>
-            </div>
-        </div>
-    </div>
-    `
+function displayPreviousPokemon(previousPokemonIndex){
+    renderDetailedCardView(previousPokemonIndex);
 }
 
-async function renderMainStats(pokemonIndex){
-    let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
-    let pokemonResponseAsJson = await pokemonResponse.json();
-
-    let pokemonAbilities = pokemonResponseAsJson.abilities;
-    let abilitiesArray = []; // Array als Zwischenlösung notwendig, damit .join funktioniert
-
-    for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
-        let abilityName = pokemonAbilities[abilityIndex].ability.name;
-        abilitiesArray.push(abilityName);
-    }
-
-    let abilitiesHTML = abilitiesArray.join(", ");
-
-    let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
-    detailedInformationContentContainer.innerHTML = `
-        <div class="info_row_mainstats">
-            <span class="info_label_mainstats">Height:</span>
-            <span class="info_value_mainstats">${pokemonResponseAsJson.height} m</span>
-        </div>
-        <div class="info_row_mainstats">
-            <span class="info_label_mainstats">Weight:</span>
-            <span class="info_value_mainstats">${pokemonResponseAsJson.weight} kg</span>
-        </div>
-        <div class="info_row_mainstats">
-            <span class="info_label_mainstats">Base Experience:</span>
-            <span class="info_value_mainstats">${pokemonResponseAsJson.base_experience} xp</span>
-        </div>
-        <div class="info_row_mainstats">
-            <span class="info_label_mainstats">Abilities:</span>
-            <span class="info_value_mainstats">${abilitiesHTML}</span>
-        </div>
-    `
-
+function displayNextPokemon(nextPokemonIndex){
+    renderDetailedCardView(nextPokemonIndex);
 }
 
-async function renderDetailedStats(pokemonIndex){
-    const MAX_STAT_VALUE = 255;
 
-    let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
-    let pokemonResponseAsJson = await pokemonResponse.json();
-    let pokemonStats = pokemonResponseAsJson.stats;
+// Overlay schließen  
 
-    let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
-    let statsHTML = '';
+function onOverlayClick(event) {
+    const overlay = document.getElementById('overlay');
 
-    for (let statsIndex = 0; statsIndex < pokemonStats.length; statsIndex++) {
-        let statName = pokemonStats[statsIndex].stat.name;
-        let statValue = pokemonStats[statsIndex].base_stat;
-        let widthPercent = (statValue / MAX_STAT_VALUE) * 100;
-
-        statsHTML += `
-            <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">${statName}</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div class="bar_fill_detailled_stats" style="width: ${widthPercent}%"></div>
-                </div>
-            </div>
-        `
-    }
-
-    detailedInformationContentContainer.innerHTML = statsHTML;
-}
-
-function adjustImageSizeDetailedView(pokemonIndex){
-    let miniCardImage = document.getElementById(`card_image_detailed_${pokemonIndex}`);
-
-    if(miniCardImage.width > 350){
-        miniCardImage.style.width = "350px";
-        miniCardImage.style.height = "auto";
+    if (event.target === overlay) {
+        closeOverlay();
     }
 }
+
+function closeOverlay() {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('d_none');     // wieder ausblenden
+    overlay.classList.remove('d_flex');  // zentrierendes Flex-Layout entfernen
+    document.body.classList.remove('no_scroll'); // Scroll wieder erlauben
+}
+
+// Anfangs-Renderfunktion
+
+// async function renderEvoChain(pokemonIndex){
+//     document.getElementById('detailed_information_content_container').classList.remove('detailed_information_content_container');
+//     document.getElementById('detailed_information_content_container').classList.add('evo_chain_container');
+
+//     let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
+//     let pokemonResponseAsJson = await pokemonResponse.json();
+
+//     let pokemonEvoImageSource = pokemonResponseAsJson.sprites.other.dream_world.front_default;
+//     let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
+
+//     detailedInformationContentContainer.innerHTML = `
+//         <img onload="adjustEvoChainImageSize(${pokemonIndex})" id="evo_chain_img_${pokemonIndex}" class="evo_chain_image" src="${pokemonEvoImageSource}" alt="${pokemonResponseAsJson.name}">
+
+//     `
+// }
 
     // <div class="pokemon_card_detailed">
 
@@ -261,21 +168,3 @@ function adjustImageSizeDetailedView(pokemonIndex){
     //         </div> -->
     //     </div>
     // </div>
-
-
-// Overlay schließen  
-
-function onOverlayClick(event) {
-    const overlay = document.getElementById('overlay');
-
-    if (event.target === overlay) {
-        closeOverlay();
-    }
-}
-
-function closeOverlay() {
-    const overlay = document.getElementById('overlay');
-    overlay.classList.add('d_none');     // wieder ausblenden
-    overlay.classList.remove('d_flex');  // zentrierendes Flex-Layout entfernen
-    document.body.classList.remove('no_scroll'); // Scroll wieder erlauben
-}

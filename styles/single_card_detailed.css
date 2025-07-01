@@ -16,7 +16,7 @@ body.no_scroll {
     border-style: solid;
     border-color: rgb(0, 0, 0);
     border-radius: 5px;
-    width: 500px;
+    width: 550px;
 }
 
 .card_header_detailed {
@@ -29,6 +29,7 @@ body.no_scroll {
 }
 
 .image_container_detailed {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -102,6 +103,8 @@ body.no_scroll {
     height: 242px;
 }
 
+/* Haupt-Stats-Reiter */
+
 .info_row_mainstats {
     display: flex;
 }
@@ -115,6 +118,8 @@ body.no_scroll {
 .info_value_mainstats {
     text-align: left;           /* <- linksbündig */
 }
+
+/* Detaillierte Stats-Reiter */
 
 .info_row_detailled_stats {
     display: flex;
@@ -144,4 +149,86 @@ body.no_scroll {
     height: 100%;
     background-color: rgb(228, 31, 37);
     transition: width 0.3s ease;
+}
+
+/* Evolutions-Reiter */
+
+.evo_chain_container {
+    background-color: rgb(1, 59, 80);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    font-family: sans-serif;
+    font-size: 16px;
+    height: 242px;
+}
+
+.evo_chain_image {
+    height: 124px;
+    width: auto;
+}
+
+.evo_arrow {
+    width: 0;
+    height: 0;
+    border-top: 16px solid transparent;
+    border-bottom: 16px solid transparent;
+    border-left: 24px solid rgb(228, 31, 37); /* Pokémon-Rot */
+    margin: 0 12px;
+}
+
+/* Navigationspfeile inenrhalb der Großansicht */
+
+.nav_arrow {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2); /* halbtransparent weiß */
+    backdrop-filter: blur(8px); /* „Frosted Glass“ Effekt */
+    border-radius: 50%; /* runde Form */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* leicht sichtbare Kante */
+    transition: transform 0.2s ease;
+    position: absolute;
+    bottom: 20px;
+}
+
+.nav_arrow:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0px 0px 4px rgb(228, 31, 37));
+    box-shadow: 0px 0px 4px rgb(228, 31, 37);
+}
+
+.left_arrow {
+    left: 20px;
+}
+
+.right_arrow {
+    right: 20px;
+}
+
+.nav_arrow::before {
+    content: "";
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: relative;
+    top: 1px; /* leichte Zentrierung vertikal */
+}
+
+.left_arrow::before {
+    border-width: 10px 14px 10px 0;
+    border-color: transparent rgba(255, 255, 255, 0.8) transparent transparent;
+    left: -2px; /* optional feinjustieren */
+}
+
+.right_arrow::before {
+    border-width: 10px 0 10px 14px;
+    border-color: transparent transparent transparent rgba(255, 255, 255, 0.8);
+    left: 2px; /* optional feinjustieren */
 }
