@@ -23,56 +23,24 @@
         </div>
         <div class="search_bar_container">
             <span class="search_icon">🔍</span>
-            <input class="search_bar" type="text" placeholder="Find your Pokémon!">
+            <input
+                class="search_bar"
+                type="text"
+                placeholder="Find your Pokémon!"
+                id="search_input"
+                oninput="searchForPokemon(this.value)"
+            >
         </div>
     </header>
-
+<div class="overall_content_wrapper">
     <div class="overlay d_none" id="overlay" onclick="onOverlayClick(event)"></div>
-
-            <!-- <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">HP</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div id="hp_value" class="bar_fill_detailled_stats" style="width: 39%"></div>
-                </div>
-            </div>
-            <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">Attack</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div id="attack_value" class="bar_fill_detailled_stats" style="width: 52%"></div>
-                </div>
-            </div>
-            <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">Defense</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div id="defense_value" class="bar_fill_detailled_stats" style="width: 43%"></div>
-                </div>
-            </div>
-            <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">Special-Attack</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div id="special_attack_value" class="bar_fill_detailled_stats" style="width: 60%"></div>
-                </div>
-            </div>
-            <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">Special-Defense</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div id="special_defense_value" class="bar_fill_detailled_stats" style="width: 50%"></div>
-                </div>
-            </div>
-            <div class="info_row_detailled_stats">
-                <span class="info_label_detailled_stats">Speed</span>
-                <div class="bar_wrapper_detailled_stats">
-                    <div id="speed_value" class="bar_fill_detailled_stats" style="width: 65%"></div>
-                </div>
-            </div> -->
-
 
     <div id="content_container" class="content_container"></div>
 
     <div class="load_pokemon_button_container" id="load_pokemon_button_container">
         <button class="load_pokemon_button" onclick="loadPokemon()">Load More Pokémon</button>
     </div>
-
+</div>
     <footer></footer>
 </body>
 <script src="script.js"></script>

@@ -1,31 +1,36 @@
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
 const BASE_URL_EVO_CHAIN = "https://pokeapi.co/api/v2/pokemon-species/";
 let currentPokemonIndex = 1;
-let amountOfLoadedPokemon = 20;
-let shownPokemonNamesArray = [];
+let amountOfLoadedPokemon = 1000;
+let shownPokemonDataArray = [];
 
 function loadPokemon(){
     let start = currentPokemonIndex;
     let end = currentPokemonIndex + amountOfLoadedPokemon;
-
     fetchAndDisplayPokemon(start, end);
-
     currentPokemonIndex = currentPokemonIndex + amountOfLoadedPokemon;
 }
 
 async function fetchAndDisplayPokemon(start, end){
     let contentContainer = document.getElementById('content_container');
-
-    for (let pokemonIndex = start; pokemonIndex < end; pokemonIndex++) {
-
-        let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-        let pokemonResponseAsJson = await pokemonResponse.json();
-
-        contentContainer.innerHTML += createMinicardTemplate(pokemonResponseAsJson, pokemonIndex);
-
-        // Hilfestellung für die Suchfunktion bzw. Schaffung der Grundlage
-
-        shownPokemonNamesArray.push(`${pokemonResponseAsJson.name}`);
+    try {
+        for (let pokemonIndex = start; pokemonIndex < end; pokemonIndex++) {
+            let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
+            if (!pokemonResponse.ok) {
+                throw new Error("Ups, da ist wohl etwas schief gelaufen."); // Netzwerkfehler, 404, etc.
+            }
+            let pokemonResponseAsJson = await pokemonResponse.json();
+            contentContainer.innerHTML += createMinicardTemplate(pokemonResponseAsJson, pokemonIndex);
+            // Daten für die Suchfunktion speichern
+            shownPokemonDataArray.push({
+                name: pokemonResponseAsJson.name,
+                data: pokemonResponseAsJson,
+                index: pokemonIndex
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Ups, da ist wohl etwas schief gelaufen.");
     }
 }
 
@@ -35,10 +40,19 @@ async function renderDetailedCardView(pokemonIndex){
     overlay.classList.add('d_flex');
     document.body.classList.add("no_scroll");
 
-    let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
-    let pokemonResponseAsJson = await pokemonResponse.json();
+    try {
+        let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
+        if (!pokemonResponse.ok) {
+            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
+        }
 
-    overlay.innerHTML = renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex);
+        let pokemonResponseAsJson = await pokemonResponse.json();
+        overlay.innerHTML = renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex);
+        
+    } catch (error) {
+        console.error(error);
+        alert("Ups, da ist wohl etwas schief gelaufen.");
+    }
 }
 
 function displayPreviousPokemon(previousPokemonIndex){
@@ -47,6 +61,32 @@ function displayPreviousPokemon(previousPokemonIndex){
 
 function displayNextPokemon(nextPokemonIndex){
     renderDetailedCardView(nextPokemonIndex);
+}
+
+// Nach Pokemon suchen
+
+function searchForPokemon(searchTerm){
+    let contentContainer = document.getElementById('content_container');
+    let term = searchTerm.toLowerCase();
+
+    contentContainer.innerHTML = '';
+
+    if (term.length < 3) {
+        // Wenn weniger als 3 Zeichen, dann alle anzeigen
+        for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
+            let pokemon = shownPokemonDataArray[searchIndex];
+            contentContainer.innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
+        }
+        return;
+    }
+
+    // Wenn mindestens 3 Zeichen, dann filtern
+    for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
+        let pokemon = shownPokemonDataArray[searchIndex];
+        if (pokemon.name.includes(term)) {
+            contentContainer.innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
+        }
+    }
 }
 
 
@@ -66,105 +106,3 @@ function closeOverlay() {
     overlay.classList.remove('d_flex');  // zentrierendes Flex-Layout entfernen
     document.body.classList.remove('no_scroll'); // Scroll wieder erlauben
 }
-
-// Anfangs-Renderfunktion
-
-// async function renderEvoChain(pokemonIndex){
-//     document.getElementById('detailed_information_content_container').classList.remove('detailed_information_content_container');
-//     document.getElementById('detailed_information_content_container').classList.add('evo_chain_container');
-
-//     let pokemonResponse = await fetch (BASE_URL + `${pokemonIndex}`);
-//     let pokemonResponseAsJson = await pokemonResponse.json();
-
-//     let pokemonEvoImageSource = pokemonResponseAsJson.sprites.other.dream_world.front_default;
-//     let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
-
-//     detailedInformationContentContainer.innerHTML = `
-//         <img onload="adjustEvoChainImageSize(${pokemonIndex})" id="evo_chain_img_${pokemonIndex}" class="evo_chain_image" src="${pokemonEvoImageSource}" alt="${pokemonResponseAsJson.name}">
-
-//     `
-// }
-
-    // <div class="pokemon_card_detailed">
-
-    //     <div class="card_header_detailed">
-    //         <div class="pokemon_id">
-    //             #1
-    //         </div>
-    //         <div class="pokemon_name">
-    //             Bulbasaur
-    //         </div>
-    //     </div>
-
-    //     <div class="image_container_detailed ${pokemonResponseAsJson.types[0].type.name} grass">
-    //         <img onload="adjustImageSize()" id="card_image_mini_${pokemonIndex}" class="card_image_detailed" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg" alt="${pokemonResponseAsJson.name}">
-    //     </div>
-    //     <div id="type_area_${pokemonIndex}" class="type_area_detailed">
-    //         <img class="type_icon_detailed" src="assets/icons/grass.svg" alt="${typeName}">
-    //     </div>
-
-    //     <div class="detailed_information_header">
-    //         <div onclick="renderMainStats()">main</div>
-    //         <div class="separator"></div>
-    //         <div onclick="renderDetailedStats()">stats</div>
-    //         <div class="separator"></div>
-    //         <div onclick="renderEvoChain()">evo chain</div>
-    //     </div>
-
-    //     <div class="detailed_information_content_container" id="detailed_information_content_container">
-
-    //         <div class="info_row_mainstats">
-    //             <span class="info_label_mainstats">Height:</span>
-    //             <span class="info_value_mainstats">0.6 m</span>
-    //         </div>
-    //         <div class="info_row_mainstats">
-    //             <span class="info_label_mainstats">Weight:</span>
-    //             <span class="info_value_mainstats">8.5 kg</span>
-    //         </div>
-    //         <div class="info_row_mainstats">
-    //             <span class="info_label_mainstats">Base Experience:</span>
-    //             <span class="info_value_mainstats">62</span>
-    //         </div>
-    //         <div class="info_row_mainstats">
-    //             <span class="info_label_mainstats">Abilities:</span>
-    //             <span class="info_value_mainstats">blaze, solar power</span>
-    //         </div>
-
-    //         <!-- <div class="info_row_detailled_stats">
-    //             <span class="info_label_detailled_stats">HP</span>
-    //             <div class="bar_wrapper_detailled_stats">
-    //                 <div id="hp_value" class="bar_fill_detailled_stats" style="width: 39%"></div>
-    //             </div>
-    //         </div>
-    //         <div class="info_row_detailled_stats">
-    //             <span class="info_label_detailled_stats">Attack</span>
-    //             <div class="bar_wrapper_detailled_stats">
-    //                 <div id="attack_value" class="bar_fill_detailled_stats" style="width: 52%"></div>
-    //             </div>
-    //         </div>
-    //         <div class="info_row_detailled_stats">
-    //             <span class="info_label_detailled_stats">Defense</span>
-    //             <div class="bar_wrapper_detailled_stats">
-    //                 <div id="defense_value" class="bar_fill_detailled_stats" style="width: 43%"></div>
-    //             </div>
-    //         </div>
-    //         <div class="info_row_detailled_stats">
-    //             <span class="info_label_detailled_stats">Special-Attack</span>
-    //             <div class="bar_wrapper_detailled_stats">
-    //                 <div id="special_attack_value" class="bar_fill_detailled_stats" style="width: 60%"></div>
-    //             </div>
-    //         </div>
-    //         <div class="info_row_detailled_stats">
-    //             <span class="info_label_detailled_stats">Special-Defense</span>
-    //             <div class="bar_wrapper_detailled_stats">
-    //                 <div id="special_defense_value" class="bar_fill_detailled_stats" style="width: 50%"></div>
-    //             </div>
-    //         </div>
-    //         <div class="info_row_detailled_stats">
-    //             <span class="info_label_detailled_stats">Speed</span>
-    //             <div class="bar_wrapper_detailled_stats">
-    //                 <div id="speed_value" class="bar_fill_detailled_stats" style="width: 65%"></div>
-    //             </div>
-    //         </div> -->
-    //     </div>
-    // </div>

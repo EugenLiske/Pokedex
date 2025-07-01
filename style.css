@@ -6,9 +6,10 @@ header {
     justify-content: space-between;
 }
 
-.content_wrapper {
+.overall_content_wrapper {
     flex: 1;
     min-height: calc(100vh - 176px - 112px);
+    background-color: rgb(0, 99, 104);
 }
 
 .content_container {
