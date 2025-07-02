@@ -1,7 +1,7 @@
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
 const BASE_URL_EVO_CHAIN = "https://pokeapi.co/api/v2/pokemon-species/";
 let currentPokemonIndex = 1;
-let amountOfLoadedPokemon = 200;
+let amountOfLoadedPokemon = 20;
 let shownPokemonDataArray = [];
 
 function loadPokemon(){

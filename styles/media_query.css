@@ -1,0 +1,86 @@
+@media(max-width: 1050px) {
+    .content_container {
+        padding: 48px;
+        gap: 24px;
+    }
+}
+
+@media(max-width: 700px) {
+    .content_container {
+        padding: 24px;
+        gap: 12px;
+    }
+}
+
+@media(max-width: 690px) {
+    header {
+    padding: 32px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+}
+
+@media(max-width: 650px) {
+    header {
+        padding: 16px 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+    }
+
+    .pokemon_card_detailed {
+        width: 450px;
+    }
+
+    .evo_chain_container {
+        padding: 4px;
+    }
+
+    .evo_chain_image {
+        width: 100px;
+    }
+}
+
+@media(max-width: 520px) {
+    .pokemon_card_detailed {
+        width: 400px;
+    }
+}
+
+@media(max-width: 420px) {
+    .pokemon_card_detailed {
+        width: 100%;
+    }
+
+    .detailed_information_content_container {
+        padding: 16px;
+        font-size: 14px;
+    }
+
+    .info_label_mainstats {
+        width: 150px;
+    }
+}
+
+@media(max-width: 400px) {
+    .content_container {
+        padding: 12px;
+    }
+
+    .evo_chain_image {
+        width: 84px;
+    }
+}
+
+
+@media(max-width: 350px) {
+    .pokeball_icon {
+        height: 48px;
+    }
+
+    .evo_chain_image {
+        width: 70px;
+    }
+}
