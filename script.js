@@ -1,7 +1,7 @@
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
 const BASE_URL_EVO_CHAIN = "https://pokeapi.co/api/v2/pokemon-species/";
 let currentPokemonIndex = 1;
-let amountOfLoadedPokemon = 1000;
+let amountOfLoadedPokemon = 200;
 let shownPokemonDataArray = [];
 
 function loadPokemon(){
@@ -13,6 +13,8 @@ function loadPokemon(){
 
 async function fetchAndDisplayPokemon(start, end){
     let contentContainer = document.getElementById('content_container');
+    const spinner = document.getElementById('loading-spinner');
+    spinner.classList.remove('d_none'); // Spinner VOR dem try-Bereich starten, damit dieser immer losgeht.
     try {
         for (let pokemonIndex = start; pokemonIndex < end; pokemonIndex++) {
             let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
@@ -31,7 +33,9 @@ async function fetchAndDisplayPokemon(start, end){
     } catch (error) {
         console.error(error);
         alert("Ups, da ist wohl etwas schief gelaufen.");
-    }
+    } finally {
+    spinner.classList.add('d_none');
+  }
 }
 
 async function renderDetailedCardView(pokemonIndex){

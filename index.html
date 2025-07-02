@@ -32,15 +32,18 @@
             >
         </div>
     </header>
-<div class="overall_content_wrapper">
-    <div class="overlay d_none" id="overlay" onclick="onOverlayClick(event)"></div>
+    <div class="overall_content_wrapper">
+        <div class="overlay d_none" id="overlay" onclick="onOverlayClick(event)"></div>
 
-    <div id="content_container" class="content_container"></div>
+        <div id="content_container" class="content_container"></div>
 
-    <div class="load_pokemon_button_container" id="load_pokemon_button_container">
-        <button class="load_pokemon_button" onclick="loadPokemon()">Load More Pokémon</button>
+        <div class="load_pokemon_button_container" id="load_pokemon_button_container">
+            <button class="load_pokemon_button" onclick="loadPokemon()">Load More Pokémon</button>
+        </div>
     </div>
-</div>
+    <div id="loading-spinner" class="loading-spinner d_none">
+         <img src="assets/icons/pokeball_icon.png" alt="Loading...">
+    </div>
     <footer></footer>
 </body>
 <script src="script.js"></script>

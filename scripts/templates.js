@@ -7,6 +7,12 @@ function createMinicardTemplate(pokemonResponseAsJson, pokemonIndex){
         typeIconsHTML += `<img class="type_icon" src="assets/icons/${typeName}.svg" alt="${typeName}">`
     }
 
+    let imgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
+
+    if (!imgSrc) {
+        imgSrc = pokemonResponseAsJson.sprites.front_default;
+    }
+
     return `
         <div class="pokemon_card_mini">
             <div class="card_header">
@@ -19,7 +25,7 @@ function createMinicardTemplate(pokemonResponseAsJson, pokemonIndex){
             </div>
 
             <div onclick="renderDetailedCardView(${pokemonIndex})" class="image_container ${pokemonResponseAsJson.types[0].type.name}">
-                <img onload="adjustImageSize(${pokemonIndex})" id="card_image_mini_${pokemonIndex}" class="card_image_mini" src="${pokemonResponseAsJson.sprites.other.dream_world.front_default}" alt="${pokemonResponseAsJson.name}">
+                <img onload="adjustImageSize(${pokemonIndex})" id="card_image_mini_${pokemonIndex}" class="card_image_mini" src="${imgSrc}" alt="${pokemonResponseAsJson.name}">
             </div>
             <div id="type_area_${pokemonIndex}" class="type_area">
                 ${typeIconsHTML}
@@ -50,6 +56,12 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
         typeIconsHTML += `<img class="type_icon_detailed" src="assets/icons/${typeName}.svg" alt="${typeName}">`
     }
 
+    let imgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
+
+    if (!imgSrc) {
+        imgSrc = pokemonResponseAsJson.sprites.front_default;
+    }
+
     // Rendern der Fähigkeiten
     let pokemonAbilities = pokemonResponseAsJson.abilities;
     let abilitiesArray = []; // Array als Zwischenlösung notwendig, damit .join funktioniert
@@ -76,7 +88,7 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
             onload="adjustImageSizeDetailedView(${pokemonIndex})"
             id="card_image_detailed_${pokemonIndex}"
             class="card_image_detailed"
-            src="${pokemonResponseAsJson.sprites.other.dream_world.front_default}"
+            src="${imgSrc}"
             alt="${pokemonResponseAsJson.name}">
 
             <div class="nav_arrow left_arrow" onclick="displayPreviousPokemon(${pokemonIndex - 1})"></div>
@@ -216,7 +228,12 @@ async function renderDetailedStats(pokemonIndex){
 async function renderEvoChain(pokemonIndex){
     document.getElementById('detailed_information_content_container').classList.remove('detailed_information_content_container');
     document.getElementById('detailed_information_content_container').classList.add('evo_chain_container');
-
+    // d_none zwecks verbesserter UE, kein halbsichtbarer Loadingkram
+    document.getElementById('detailed_information_content_container').classList.add('d_none');
+    const spinner = document.getElementById('loading-spinner');
+    spinner.classList.remove('d_none'); // Spinner VOR dem try-Bereich starten, damit dieser immer losgeht.
+    // Loading der Evochain, muss vorher deklariert werden für das finally
+    let evoChainHTML = '';
     try {
         // Pokémon-Speziesdaten laden, um an die Evolution-Chain-URL zu kommen
         let speciesResponse = await fetch(BASE_URL_EVO_CHAIN + `${pokemonIndex}`);
@@ -235,7 +252,6 @@ async function renderEvoChain(pokemonIndex){
 
         // Evolutionen durchlaufen
         let currentEvoChainData = evoChainResponseAsJson.chain;
-        let evoChainHTML = '';
 
         while (currentEvoChainData) {
             let pokemonName = currentEvoChainData.species.name;
@@ -247,6 +263,10 @@ async function renderEvoChain(pokemonIndex){
             let pokemonResponseAsJson = await pokemonResponse.json();
 
             let evoChainImgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
+
+            if (!evoChainImgSrc) {
+                evoChainImgSrc = pokemonResponseAsJson.sprites.front_default;
+            }
 
             evoChainHTML += `
                 <img
@@ -262,13 +282,14 @@ async function renderEvoChain(pokemonIndex){
 
             currentEvoChainData = currentEvoChainData.evolves_to[0];
         }
-
-        document.getElementById('detailed_information_content_container').innerHTML = evoChainHTML;
-
     } catch (error) {
         console.error(error);
         alert("Ups, da ist wohl etwas schief gelaufen.");
-    }
+    } finally { // finally wird IMMER ausgeführt
+        spinner.classList.add('d_none');
+        document.getElementById('detailed_information_content_container').classList.remove('d_none');
+        document.getElementById('detailed_information_content_container').innerHTML = evoChainHTML;
+  }
 }
 
 // Anpassung der Bilder - Evochain
