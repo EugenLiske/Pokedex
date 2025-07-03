@@ -46,6 +46,11 @@
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
 }
 
+.search_bar:disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+}
+
 /* Typ-Icon in der Minikarte */
 
 .type_icon {

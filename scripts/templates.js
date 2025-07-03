@@ -81,6 +81,12 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
                 <div class="pokemon_name">
                     ${pokemonResponseAsJson.name}
                 </div>
+                <img
+                    src="assets/icons/delete_button.png"
+                    alt="Close"
+                    class="close_button"
+                    onclick="closeOverlay()"
+                >
             </div>
 
         <div class="image_container_detailed ${pokemonResponseAsJson.types[0].type.name}">

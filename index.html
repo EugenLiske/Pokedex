@@ -15,6 +15,7 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/pokeball_icon.png">
 </head>
 <body onload="loadPokemon()">
+<div class="pokemon_app_body_overall_container">
     <header>
         <div class="pokemon_icon_plus_name">
             <img class="pokeball_icon" src="assets/icons/pokeball_icon.png" alt="pokeball_icon">
@@ -40,13 +41,14 @@
         <div id="content_container" class="content_container"></div>
 
         <div class="load_pokemon_button_container" id="load_pokemon_button_container">
-            <button class="load_pokemon_button" onclick="loadPokemon()">Load More Pokémon</button>
+            <button id="loading_button" class="load_pokemon_button" onclick="loadPokemon()">Load More Pokémon</button>
         </div>
     </div>
     <div id="loading-spinner" class="loading-spinner d_none">
          <img src="assets/icons/pokeball_icon.png" alt="Loading...">
     </div>
     <footer></footer>
+</div>
 </body>
 <script src="script.js"></script>
 <script src="scripts/templates.js"></script>

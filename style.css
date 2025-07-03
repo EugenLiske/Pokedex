@@ -6,6 +6,10 @@ header {
     justify-content: space-between;
 }
 
+.pokemon_app_body_overall_container {
+  max-width: 2000px;
+}
+
 .overall_content_wrapper {
     flex: 1;
     min-height: calc(100vh - 176px - 112px);
