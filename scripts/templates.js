@@ -1,18 +1,9 @@
+// Template-Funktion, um die Minikarten zu rendern
+
 function createMinicardTemplate(pokemonResponseAsJson, pokemonIndex){
-    let pokemonTypes = pokemonResponseAsJson.types;
-    let typeIconsHTML = '';
-
-    for (let typeIndex = 0; typeIndex < pokemonTypes.length; typeIndex++) {
-        let typeName = pokemonTypes[typeIndex].type.name;
-        typeIconsHTML += `<img class="type_icon" src="assets/icons/${typeName}.svg" alt="${typeName}">`
-    }
-
-    let imgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
-
-    if (!imgSrc) {
-        imgSrc = pokemonResponseAsJson.sprites.front_default;
-    }
-
+    let preparationsResults = prepareMinicardTemplate(pokemonResponseAsJson);
+    let typeIconsHTML = preparationsResults.typeIconsHTML;
+    let imgSrc = preparationsResults.imgSrc;
     return `
         <div class="pokemon_card_mini">
             <div class="card_header">
@@ -25,7 +16,7 @@ function createMinicardTemplate(pokemonResponseAsJson, pokemonIndex){
             </div>
 
             <div onclick="renderDetailedCardView(${pokemonIndex})" class="image_container ${pokemonResponseAsJson.types[0].type.name}">
-                <img onload="adjustImageSize(${pokemonIndex})" id="card_image_mini_${pokemonIndex}" class="card_image_mini" src="${imgSrc}" alt="${pokemonResponseAsJson.name}">
+                <img onload="adjustImageSize(event)" id="card_image_mini_${pokemonIndex}" class="card_image_mini" src="${imgSrc}" alt="${pokemonResponseAsJson.name}">
             </div>
             <div id="type_area_${pokemonIndex}" class="type_area">
                 ${typeIconsHTML}
@@ -35,43 +26,13 @@ function createMinicardTemplate(pokemonResponseAsJson, pokemonIndex){
     `
 }
 
-// Anpassung der Bilder - Miniansicht
-
-function adjustImageSize(pokemonIndex){
-    let miniCardImage = document.getElementById(`card_image_mini_${pokemonIndex}`);
-
-    if(miniCardImage.width > 242){
-        miniCardImage.style.width = "242px";
-        miniCardImage.style.height = "auto";
-    }
-}
+// Template-Funktion, um die Großansicht zu rendern
 
 function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
-    // Rendern der Typ-Icons
-    let pokemonTypes = pokemonResponseAsJson.types;
-    let typeIconsHTML = '';
-
-    for (let typeIndex = 0; typeIndex < pokemonTypes.length; typeIndex++) {
-        let typeName = pokemonTypes[typeIndex].type.name;
-        typeIconsHTML += `<img class="type_icon_detailed" src="assets/icons/${typeName}.svg" alt="${typeName}">`
-    }
-
-    let imgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
-
-    if (!imgSrc) {
-        imgSrc = pokemonResponseAsJson.sprites.front_default;
-    }
-
-    // Rendern der Fähigkeiten
-    let pokemonAbilities = pokemonResponseAsJson.abilities;
-    let abilitiesArray = []; // Array als Zwischenlösung notwendig, damit .join funktioniert
-
-    for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
-        let abilityName = pokemonAbilities[abilityIndex].ability.name;
-        abilitiesArray.push(abilityName);
-    }
-    let abilitiesHTML = abilitiesArray.join(", ");
-
+    let preparationsResults = prepareDetailedCardTemplate(pokemonResponseAsJson);
+    let typeIconsHTML = preparationsResults.typeIconsHTML;
+    let imgSrc = preparationsResults.imgSrc;
+    let abilitiesHTML = preparationsResults.abilitiesHTML;
     return `
         <div class="pokemon_card_detailed">
             <div class="card_header_detailed">
@@ -88,10 +49,9 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
                     onclick="closeOverlay()"
                 >
             </div>
-
         <div class="image_container_detailed ${pokemonResponseAsJson.types[0].type.name}">
             <img
-            onload="adjustImageSizeDetailedView(${pokemonIndex})"
+            onload="adjustImageSizeDetailedView(event)"
             id="card_image_detailed_${pokemonIndex}"
             class="card_image_detailed"
             src="${imgSrc}"
@@ -103,7 +63,6 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
         <div id="type_area_detailed_${pokemonIndex}" class="type_area_detailed">
             ${typeIconsHTML}
         </div>
-
         <div class="detailed_information_header">
             <div class="more_stats_button" onclick="renderMainStats(${pokemonIndex})">main</div>
             <div class="separator"></div>
@@ -111,7 +70,6 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
             <div class="separator"></div>
             <div class="more_stats_button" onclick="renderEvoChain(${pokemonIndex})">evo chain</div>
         </div>
-
         <div class="detailed_information_content_container" id="detailed_information_content_container">
             <div class="info_row_mainstats">
                 <span class="info_label_mainstats">Height:</span>
@@ -134,39 +92,15 @@ function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
     `
 }
 
-// Anpassung der Bilder - Großansicht
-
-function adjustImageSizeDetailedView(pokemonIndex){
-    let miniCardImage = document.getElementById(`card_image_detailed_${pokemonIndex}`);
-
-    if(miniCardImage.width > 350){
-        miniCardImage.style.width = "350px";
-        miniCardImage.style.height = "auto";
-    }
-}
+// Template-Funktion, um die MAIN-Stats zu rendern (linker Reiter innerhalb der Großansicht)
 
 async function renderMainStats(pokemonIndex){
     document.getElementById('detailed_information_content_container').classList.add('detailed_information_content_container');
     document.getElementById('detailed_information_content_container').classList.remove('evo_chain_container');
-
     try {
-        let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-        if (!pokemonResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
-
-        let pokemonResponseAsJson = await pokemonResponse.json();
-
-        let pokemonAbilities = pokemonResponseAsJson.abilities;
-        let abilitiesArray = []; // Array als Zwischenlösung notwendig, damit .join funktioniert
-
-        for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
-            let abilityName = pokemonAbilities[abilityIndex].ability.name;
-            abilitiesArray.push(abilityName);
-        }
-
-        let abilitiesHTML = abilitiesArray.join(", ");
-
+        let preparationResults = await prepareMainStats(pokemonIndex)
+        let pokemonResponseAsJson = preparationResults.pokemonResponseAsJson;
+        let abilitiesHTML = preparationResults.abilitiesHTML;
         let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
         detailedInformationContentContainer.innerHTML = `
             <div class="info_row_mainstats">
@@ -192,28 +126,21 @@ async function renderMainStats(pokemonIndex){
     }
 }
 
+// Template-Funktion, um die detaillierten Stats zu rendern (mittiger Reiter innerhalb der Großansicht)
+
 async function renderDetailedStats(pokemonIndex){
     document.getElementById('detailed_information_content_container').classList.add('detailed_information_content_container');
     document.getElementById('detailed_information_content_container').classList.remove('evo_chain_container');
     const MAX_STAT_VALUE = 255;
-
     try {
-        let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-        if (!pokemonResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
-
-        let pokemonResponseAsJson = await pokemonResponse.json();
-        let pokemonStats = pokemonResponseAsJson.stats;
-
+        let preparationsResults = await prepareDetailedStats(pokemonIndex);
+        let pokemonStats = preparationsResults.pokemonStats;
         let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
         let statsHTML = '';
-
         for (let statsIndex = 0; statsIndex < pokemonStats.length; statsIndex++) {
             let statName = pokemonStats[statsIndex].stat.name;
             let statValue = pokemonStats[statsIndex].base_stat;
             let widthPercent = (statValue / MAX_STAT_VALUE) * 100;
-
             statsHTML += `
                 <div class="info_row_detailled_stats">
                     <span class="info_label_detailled_stats">${statName}</span>
@@ -223,7 +150,6 @@ async function renderDetailedStats(pokemonIndex){
                 </div>
             `;
         }
-
         detailedInformationContentContainer.innerHTML = statsHTML;
     } catch (error) {
         console.error(error);
@@ -231,49 +157,21 @@ async function renderDetailedStats(pokemonIndex){
     }
 }
 
+// Funktion, um die Evochain zu rendern (rechter Reiter innerhalb der Großansicht)
+
 async function renderEvoChain(pokemonIndex){
-    document.getElementById('detailed_information_content_container').classList.remove('detailed_information_content_container');
-    document.getElementById('detailed_information_content_container').classList.add('evo_chain_container');
-    // d_none zwecks verbesserter UE, kein halbsichtbarer Loadingkram
-    document.getElementById('detailed_information_content_container').classList.add('d_none');
+    prepareEvoChain();
     const spinner = document.getElementById('loading-spinner');
-    spinner.classList.remove('d_none'); // Spinner VOR dem try-Bereich starten, damit dieser immer losgeht.
-    // Loading der Evochain, muss vorher deklariert werden für das finally
+    spinner.classList.remove('d_none');
     let evoChainHTML = '';
     try {
-        // Pokémon-Speziesdaten laden, um an die Evolution-Chain-URL zu kommen
-        let speciesResponse = await fetch(BASE_URL_EVO_CHAIN + `${pokemonIndex}`);
-        if (!speciesResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
-        let speciesResponseAsJson = await speciesResponse.json();
-
-        // Evolution-Chain laden
-        let evoChainURL = speciesResponseAsJson.evolution_chain.url;
-        let evoChainResponse = await fetch(evoChainURL);
-        if (!evoChainResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
-        let evoChainResponseAsJson = await evoChainResponse.json();
-
-        // Evolutionen durchlaufen
-        let currentEvoChainData = evoChainResponseAsJson.chain;
+        let evoChainData = await getEvoChainData(pokemonIndex);
+        let currentEvoChainData = evoChainData.chain;
 
         while (currentEvoChainData) {
-            let pokemonName = currentEvoChainData.species.name;
-
-            let pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-            if (!pokemonResponse.ok) {
-                throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-            }
-            let pokemonResponseAsJson = await pokemonResponse.json();
-
-            let evoChainImgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
-
-            if (!evoChainImgSrc) {
-                evoChainImgSrc = pokemonResponseAsJson.sprites.front_default;
-            }
-
+            let evoChainPreparationsResults = await generateCurrentEvoChainImage(currentEvoChainData)
+            let pokemonName =  evoChainPreparationsResults.pokemonName;
+            let evoChainImgSrc =  evoChainPreparationsResults.evoChainImgSrc;
             evoChainHTML += `
                 <img
                 onload="adjustEvoChainImageSize(event)"
@@ -285,7 +183,6 @@ async function renderEvoChain(pokemonIndex){
             if (currentEvoChainData.evolves_to.length > 0) {
                 evoChainHTML += `<div class="evo_arrow"></div>`;
             }
-
             currentEvoChainData = currentEvoChainData.evolves_to[0];
         }
     } catch (error) {
@@ -296,15 +193,4 @@ async function renderEvoChain(pokemonIndex){
         document.getElementById('detailed_information_content_container').classList.remove('d_none');
         document.getElementById('detailed_information_content_container').innerHTML = evoChainHTML;
   }
-}
-
-// Anpassung der Bilder - Evochain
-
-function adjustEvoChainImageSize(event) {
-    const image = event.target;
-
-    if (image.width > 128) {
-        image.style.width = "128px";
-        image.style.height = "auto";
-    }
 }
