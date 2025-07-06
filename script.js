@@ -4,7 +4,7 @@ let currentPokemonIndex = 1;
 let amountOfLoadedPokemon = 50;
 let shownPokemonDataArray = [];
 
-// Pokemon laden - Beim Start und beim Betätigung des Buttons
+// loading pokemon - at the start and when pressing the loading button
 
 function loadPokemon(){
     let start = currentPokemonIndex;
@@ -13,24 +13,14 @@ function loadPokemon(){
     currentPokemonIndex = currentPokemonIndex + amountOfLoadedPokemon;
 }
 
-// Eigentliche fetch-Funktion, um die Pokemondaten zu greifen.
+// fetching and displaying the pokemon data
 
 async function fetchAndDisplayPokemon(start, end){
     let contentContainer = document.getElementById('content_container');
     prepareDomForFetching();
     try {
         for (let pokemonIndex = start; pokemonIndex < end; pokemonIndex++) {
-            let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-            if (!pokemonResponse.ok) {
-                throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-            }
-            let pokemonResponseAsJson = await pokemonResponse.json();
-            contentContainer.innerHTML += createMinicardTemplate(pokemonResponseAsJson, pokemonIndex);
-            shownPokemonDataArray.push({
-                name: pokemonResponseAsJson.name,
-                data: pokemonResponseAsJson,
-                index: pokemonIndex
-            });
+            await loadAndRenderSinglePokemon(pokemonIndex, contentContainer);
         }
     } catch (error) {
         console.error(error);
@@ -40,160 +30,78 @@ async function fetchAndDisplayPokemon(start, end){
   }
 }
 
-// Funktionen für Spinner sowie Button- und Suchfeld-Deaktivierung während des Fetchens sowie der Aktivierung danach
+// loading and rendering single pokemon - minicard
 
-function prepareDomForFetching(){
-    const spinner = document.getElementById('loading-spinner');
-    const loadingButton = document.getElementById('loading_button');
-    const searchInput = document.getElementById('search_input');
-
-    spinner.classList.remove('d_none');
-    loadingButton.disabled = true;
-    searchInput.disabled = true; 
+async function loadAndRenderSinglePokemon(pokemonIndex, container) {
+    const response = await fetch(BASE_URL + pokemonIndex);
+    checkForErrors(response);
+    const data = await response.json();
+    container.innerHTML += createMinicardTemplate(data, pokemonIndex);
+    shownPokemonDataArray.push({
+        name: data.name,
+        data: data,
+        index: pokemonIndex
+    });
 }
 
-function adjustDomAfterFetching(){
-    const spinner = document.getElementById('loading-spinner');
-    const loadingButton = document.getElementById('loading_button');
-    const searchInput = document.getElementById('search_input');
-
-    spinner.classList.add('d_none');
-    loadingButton.disabled = false; 
-    searchInput.disabled = false;
-}
-
-// Funktion, um die Großansicht der Pokemon-Karten zu rendern
-
-async function renderDetailedCardView(pokemonIndex){
-    let overlay = document.getElementById('overlay');
-    prepareOverlay();
-    try {
-        let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-        if (!pokemonResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
-
-        let pokemonResponseAsJson = await pokemonResponse.json();
-        overlay.innerHTML = renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex);
-        
-    } catch (error) {
-        console.error(error);
-        alert("Ups, da ist wohl etwas schief gelaufen.");
-    }
-}
-
-// Funktion, um das Overlay sichtbar zu machen
-
-function prepareOverlay(){
-    overlay.classList.remove('d_none');
-    overlay.classList.add('d_flex');
-    document.body.classList.add("no_scroll");
-}
-
-// Funktionen zum Durchblättern der Pokemon
-
-function displayPreviousPokemon(previousPokemonIndex){
-    if(previousPokemonIndex > 0){
-        renderDetailedCardView(previousPokemonIndex);
-    }
-}
-
-function displayNextPokemon(nextPokemonIndex){
-    renderDetailedCardView(nextPokemonIndex);
-}
-
-// Nach Pokemon suchen
-
-function searchForPokemon(searchTerm){
-    let contentContainer = document.getElementById('content_container');
-    let term = searchTerm.toLowerCase();
-
-    contentContainer.innerHTML = '';
-
-    if (term.length < 3) {  // Wenn weniger als 3 Zeichen, dann alle anzeigen
-        for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
-            let pokemon = shownPokemonDataArray[searchIndex];
-            contentContainer.innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
-        }
-        return;
-    }
-    for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
-        let pokemon = shownPokemonDataArray[searchIndex];
-        if (pokemon.name.includes(term)) {
-            contentContainer.innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
-        }
-    }
-}
-
-
-// Overlay schließen  
-
-function onOverlayClick(event) {
-    const overlay = document.getElementById('overlay');
-
-    if (event.target === overlay) {
-        closeOverlay();
-    }
-}
-
-function closeOverlay() {
-    const overlay = document.getElementById('overlay');
-    overlay.classList.add('d_none');     // wieder ausblenden
-    overlay.classList.remove('d_flex');  // zentrierendes Flex-Layout entfernen
-    document.body.classList.remove('no_scroll'); // Scroll wieder erlauben
-}
-
-// Funktionen für die Großansicht
-
-// Funktion, um Type-Icons und Bilder für die Minikarten vorzubereiten
+// prepare type icons and images for the minicards
 
 function prepareMinicardTemplate(pokemonResponseAsJson){
-    let pokemonTypes = pokemonResponseAsJson.types;
-    let typeIconsHTML = '';
-    for (let typeIndex = 0; typeIndex < pokemonTypes.length; typeIndex++) {
-        let typeName = pokemonTypes[typeIndex].type.name;
-        typeIconsHTML += `<img class="type_icon" src="assets/icons/${typeName}.svg" alt="${typeName}">`
-    }
-    let imgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
-    if (!imgSrc) {
-        imgSrc = pokemonResponseAsJson.sprites.front_default;
-    }
+    let typeIconsHTML = createTypeIcons(pokemonResponseAsJson);
+    let imgSrc = getBestPokemonImage(
+        pokemonResponseAsJson.sprites.other.dream_world.front_default,
+        pokemonResponseAsJson.sprites.front_default
+    );
     return {
         typeIconsHTML: typeIconsHTML,
         imgSrc: imgSrc
     };
 }
 
-// Anpassung der Bilder - Miniansicht
+// create the minicard
 
-function adjustImageSize(event){
-    const miniCardImage = event.target;
-    if(miniCardImage.width > 242){
-        miniCardImage.style.width = "242px";
-        miniCardImage.style.height = "auto";
+function createMinicardTemplate(pokemonResponseAsJson, pokemonIndex){
+    let preparationsResults = prepareMinicardTemplate(pokemonResponseAsJson);
+    let typeIconsHTML = preparationsResults.typeIconsHTML;
+    let imgSrc = preparationsResults.imgSrc;
+    return buildRawTemplateMinicard(pokemonResponseAsJson, imgSrc, typeIconsHTML, pokemonIndex)
+}
+
+// rendering single pokemon - detailed view
+
+async function renderDetailedCardView(pokemonIndex){
+    let overlay = document.getElementById('overlay');
+    prepareOverlay();
+    try {
+        let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
+        checkForErrors(pokemonResponse);
+        let pokemonResponseAsJson = await pokemonResponse.json();
+        overlay.innerHTML = renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex);
+    } catch (error) {
+        console.error(error);
+        alert("Ups, da ist wohl etwas schief gelaufen.");
     }
 }
 
-// Funktion, um Type-Icons, Bilder und Abilities für die Großansicht vorzubereiten
+// create the detailed card
+
+function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
+    let preparationsResults = prepareDetailedCardTemplate(pokemonResponseAsJson);
+    let typeIconsHTML = preparationsResults.typeIconsHTML;
+    let imgSrc = preparationsResults.imgSrc;
+    let abilitiesHTML = preparationsResults.abilitiesHTML;
+    return buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, typeIconsHTML, imgSrc, abilitiesHTML);
+}
+
+// prepare type icons, images and abilities for the detailed card
 
 function prepareDetailedCardTemplate(pokemonResponseAsJson){
-    let pokemonTypes = pokemonResponseAsJson.types;
-    let typeIconsHTML = '';
-    for (let typeIndex = 0; typeIndex < pokemonTypes.length; typeIndex++) {
-        let typeName = pokemonTypes[typeIndex].type.name;
-        typeIconsHTML += `<img class="type_icon_detailed" src="assets/icons/${typeName}.svg" alt="${typeName}">`
-    }
-    let imgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
-    if (!imgSrc) {
-        imgSrc = pokemonResponseAsJson.sprites.front_default;
-    }
-    let pokemonAbilities = pokemonResponseAsJson.abilities;
-    let abilitiesArray = [];
-    for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
-        let abilityName = pokemonAbilities[abilityIndex].ability.name;
-        abilitiesArray.push(abilityName);
-    }
-    abilitiesHTML = abilitiesArray.join(", ");
+    let typeIconsHTML = createTypeIcons(pokemonResponseAsJson);
+    let imgSrc = getBestPokemonImage(
+        pokemonResponseAsJson.sprites.other.dream_world.front_default,
+        pokemonResponseAsJson.sprites.front_default
+    );
+    let abilitiesHTML = createAbilityNames(pokemonResponseAsJson);
     return {
         typeIconsHTML: typeIconsHTML,
         imgSrc: imgSrc,
@@ -201,46 +109,71 @@ function prepareDetailedCardTemplate(pokemonResponseAsJson){
     };
 }
 
-// Anpassung der Bilder - Großansicht
+// create the main stats of the detailled card
 
-function adjustImageSizeDetailedView(event){
-    const miniCardImage = event.target;
-
-    if(miniCardImage.width > 350){
-        miniCardImage.style.width = "350px";
-        miniCardImage.style.height = "auto";
+async function renderMainStats(pokemonIndex){
+    document.getElementById('detailed_information_content_container').classList.add('detailed_information_content_container');
+    document.getElementById('detailed_information_content_container').classList.remove('evo_chain_container');
+    try {
+        let preparationResults = await prepareMainStats(pokemonIndex)
+        let pokemonResponseAsJson = preparationResults.pokemonResponseAsJson;
+        let abilitiesHTML = preparationResults.abilitiesHTML;
+        let detailedInformationContentContainer = document.getElementById('detailed_information_content_container');
+        detailedInformationContentContainer.innerHTML = buildRawTemplateMainstats(pokemonResponseAsJson, abilitiesHTML);
+    } catch (error) {
+        console.error(error);
+        alert("Ups, da ist wohl etwas schief gelaufen.");
     }
 }
 
-// Funktion, um Abilities und pokemonResponseAsJson für die MAIN-Stats in der Großansicht vorzubereiten
+// prepare the abilities and pokemonResponseAsJson for the mainstats of the detailled card
 
 async function prepareMainStats(pokemonIndex){
         let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-        if (!pokemonResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
+        checkForErrors(pokemonResponse);
         let pokemonResponseAsJson = await pokemonResponse.json();
-        let pokemonAbilities = pokemonResponseAsJson.abilities;
-        let abilitiesArray = [];
-        for (let abilityIndex = 0; abilityIndex < pokemonAbilities.length; abilityIndex++) {
-            let abilityName = pokemonAbilities[abilityIndex].ability.name;
-            abilitiesArray.push(abilityName);
-        }
-        abilitiesHTML = abilitiesArray.join(", ");
+        let abilitiesHTML = createAbilityNames(pokemonResponseAsJson);
         return {
             pokemonResponseAsJson: pokemonResponseAsJson,
             abilitiesHTML: abilitiesHTML
         };
 }
 
-// Funktion, um pokemonStatsfür die detaillierten Stats in der Großansicht vorzubereiten
+// create the detailled stats of the detailled card
+
+async function renderDetailedStats(pokemonIndex){
+    document.getElementById('detailed_information_content_container').classList.add('detailed_information_content_container');
+    document.getElementById('detailed_information_content_container').classList.remove('evo_chain_container');
+    try {
+        let preparationsResults = await prepareDetailedStats(pokemonIndex);
+        let pokemonStats = preparationsResults.pokemonStats;
+        let statsHTML = generateMainStatsHTML(pokemonStats);
+        document.getElementById('detailed_information_content_container').innerHTML = statsHTML;
+    } catch (error) {
+        console.error(error);
+        alert("Ups, da ist wohl etwas schief gelaufen.");
+    }
+}
+
+// create main stats html for the detailled card
+
+function generateMainStatsHTML(pokemonStats) {
+    const MAX_STAT_VALUE = 255;
+    let statsHTML = '';
+    for (let i = 0; i < pokemonStats.length; i++) {
+        const statName = pokemonStats[i].stat.name;
+        const statValue = pokemonStats[i].base_stat;
+        const widthPercent = (statValue / MAX_STAT_VALUE) * 100;
+        statsHTML += buildRawTemplateDetailedStats(statName, widthPercent);
+    }
+    return statsHTML;
+}
+
+// prepare the pokemon stats for the detailled stats of the detailled card
 
 async function prepareDetailedStats(pokemonIndex) {
     let pokemonResponse = await fetch(BASE_URL + `${pokemonIndex}`);
-    if (!pokemonResponse.ok) {
-        throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-    }
-
+    checkForErrors(pokemonResponse);
     let pokemonResponseAsJson = await pokemonResponse.json();
     let pokemonStats = pokemonResponseAsJson.stats;
     return {
@@ -248,61 +181,72 @@ async function prepareDetailedStats(pokemonIndex) {
     };
 }
 
-// Funktion, um das CSS auf die Evochain anzupassen
+// create the evochain for the detailled card
 
-function prepareEvoChain(){
-    document.getElementById('detailed_information_content_container').classList.remove('detailed_information_content_container');
-    document.getElementById('detailed_information_content_container').classList.add('evo_chain_container');
-    document.getElementById('detailed_information_content_container').classList.add('d_none');
+async function renderEvoChain(pokemonIndex){
+    prepareEvoChain();
+    const spinner = document.getElementById('loading-spinner');
+    spinner.classList.remove('d_none');
+    let evoChainHTML = '';
+    try {
+        evoChainHTML = await generateEvoChainHTML(pokemonIndex);
+    } catch (error) {
+        console.error(error);
+        alert("Ups, da ist wohl etwas schief gelaufen.");
+    } finally { // finally wird IMMER ausgeführt
+        spinner.classList.add('d_none');
+        document.getElementById('detailed_information_content_container').classList.remove('d_none');
+        document.getElementById('detailed_information_content_container').innerHTML = evoChainHTML;
+  }
 }
 
-// Funktion, um an die Evochain-Daten zu kommen
+// create evochain html for the detailled card
+
+async function generateEvoChainHTML(pokemonIndex){
+    let evoChainHTML = '';
+    let evoChainData = await getEvoChainData(pokemonIndex);
+    let currentEvoChainData = evoChainData.chain;
+    while (currentEvoChainData) {
+        let evoChainPreparationsResults = await generateCurrentEvoChainImage(currentEvoChainData)
+        let pokemonName =  evoChainPreparationsResults.pokemonName;
+        let evoChainImgSrc =  evoChainPreparationsResults.evoChainImgSrc;
+        evoChainHTML += buildRawTemplateEvoChain(evoChainImgSrc, pokemonName);
+            if (currentEvoChainData.evolves_to.length > 0) {
+                evoChainHTML += `<div class="evo_arrow"></div>`;
+            }
+        currentEvoChainData = currentEvoChainData.evolves_to[0];
+    }
+    return evoChainHTML;
+}
+
+
+// get evochain data
 
 async function getEvoChainData(pokemonIndex){
-        // Pokémon-Speziesdaten laden, um an die Evolution-Chain-URL zu kommen
-        let speciesResponse = await fetch(BASE_URL_EVO_CHAIN + `${pokemonIndex}`);
-        if (!speciesResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
+        let speciesResponse = await fetch(BASE_URL_EVO_CHAIN + `${pokemonIndex}`); // get evochain-url
+        checkForErrors(speciesResponse);
         let speciesResponseAsJson = await speciesResponse.json();
-
-        // Evolution-Chain laden
         let evoChainURL = speciesResponseAsJson.evolution_chain.url;
-        let evoChainResponse = await fetch(evoChainURL);
-        if (!evoChainResponse.ok) {
-            throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-        }
+        let evoChainResponse = await fetch(evoChainURL); // get evochain-data
+        checkForErrors(evoChainResponse);
         let evoChainResponseAsJson = await evoChainResponse.json();
         return evoChainResponseAsJson;
 }
 
-// Funktion, um an die Evochain-Bilder zu kommen
+// generate evochain images
 
 async function generateCurrentEvoChainImage(currentEvoChainData){
     let pokemonName = currentEvoChainData.species.name;
     let pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-    if (!pokemonResponse.ok) {
-        throw new Error("Ups, da ist wohl etwas schief gelaufen.");
-    }
+    checkForErrors(pokemonResponse);
     let pokemonResponseAsJson = await pokemonResponse.json();
     let evoChainImgSrc = pokemonResponseAsJson.sprites.other.dream_world.front_default;
     if (!evoChainImgSrc) {
         evoChainImgSrc = pokemonResponseAsJson.sprites.front_default;
     }
-
     return {
         pokemonName: pokemonName,
         evoChainImgSrc: evoChainImgSrc,
     };
 }
 
-// Anpassung der Bilder - Evochain
-
-function adjustEvoChainImageSize(event) {
-    const image = event.target;
-
-    if (image.width > 128) {
-        image.style.width = "128px";
-        image.style.height = "auto";
-    }
-}
