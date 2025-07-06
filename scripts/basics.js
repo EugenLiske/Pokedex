@@ -3,22 +3,48 @@
 // search bar function
 
 function searchForPokemon(searchTerm){
-    let contentContainer = document.getElementById('content_container');
-    let term = searchTerm.toLowerCase();
-    contentContainer.innerHTML = '';
+    disableLoadingButton();
+    let term = prepareForSearch(searchTerm);
     if (term.length < 3) {
-        for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
-            let pokemon = shownPokemonDataArray[searchIndex];
-            contentContainer.innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
-        }
+        displayAllPokemon(term);
         return;
     }
+    displaySearchResults(term);
+}
+
+function displaySearchResults(term){
     for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
         let pokemon = shownPokemonDataArray[searchIndex];
         if (pokemon.name.includes(term)) {
-            contentContainer.innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
+            document.getElementById('content_container').innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
         }
     }
+}
+
+function displayAllPokemon(term){
+    for (let searchIndex = 0; searchIndex < shownPokemonDataArray.length; searchIndex++) {
+        let pokemon = shownPokemonDataArray[searchIndex];
+        document.getElementById('content_container').innerHTML += createMinicardTemplate(pokemon.data, pokemon.index);
+    }
+    if (term.length === 0) {
+        enableLoadingButton();
+    }
+}
+
+function prepareForSearch(searchTerm){
+    document.getElementById('content_container').innerHTML = '';
+    let term = searchTerm.toLowerCase();
+    return term;
+}
+
+function disableLoadingButton(){
+    document.getElementById('loading_button').disabled = true;
+    document.getElementById('loading_button').classList.add('load_pokemon_button_disabled');
+}
+
+function enableLoadingButton(){
+    document.getElementById('loading_button').disabled = false;
+    document.getElementById('loading_button').classList.remove('load_pokemon_button_disabled');
 }
 
 // overlay
@@ -89,6 +115,17 @@ function adjustDomAfterFetching(){
 function displayPreviousPokemon(previousPokemonIndex){
     if(previousPokemonIndex > 0){
         renderDetailedCardView(previousPokemonIndex);
+    }
+}
+
+// check if button needs to be disabled - in case of bulbasaur
+
+function updateLeftButtonState(pokemonIndex) {
+    let  leftButton = document.getElementById(`left_arrow_button_${pokemonIndex}`);
+    if (pokemonIndex <= 1) {
+        leftButton.classList.add('nav_arrow_disabled');
+    } else {
+        leftButton.classList.remove('nav_arrow_disabled');
     }
 }
 

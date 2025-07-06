@@ -48,7 +48,7 @@ function buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, typeI
             src="${imgSrc}"
             alt="${pokemonResponseAsJson.name}">
 
-            <div class="nav_arrow left_arrow" onclick="displayPreviousPokemon(${pokemonIndex - 1})"></div>
+            <div class="nav_arrow left_arrow" id="left_arrow_button_${pokemonIndex}" onclick="displayPreviousPokemon(${pokemonIndex - 1})"></div>
             <div class="nav_arrow right_arrow" onclick="displayNextPokemon(${pokemonIndex + 1})"></div>
         </div>
         <div id="type_area_detailed_${pokemonIndex}" class="type_area_detailed">

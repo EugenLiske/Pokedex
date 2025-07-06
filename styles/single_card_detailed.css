@@ -242,3 +242,19 @@ body.no_scroll {
     border-color: transparent transparent transparent rgba(255, 255, 255, 0.8);
     left: 2px; /* optional feinjustieren */
 }
+
+/* Button-Deaktivierung für Bisasam */
+
+.nav_arrow_disabled {
+    pointer-events: none;
+    opacity: 0.3;
+    filter: none;
+    box-shadow: none;
+    cursor: default;
+}
+
+.nav_arrow_disabled:hover {
+    transform: none;
+    box-shadow: none;
+    filter: none;
+}

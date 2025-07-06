@@ -14,15 +14,23 @@
 
 @media(max-width: 690px) {
     header {
-    padding: 32px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+        padding: 32px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 }
 
 @media(max-width: 650px) {
     header {
+        padding: 16px 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+    }
+
+    .inner_wrapper_header{
         padding: 16px 8px;
         display: flex;
         flex-direction: column;
@@ -46,6 +54,15 @@
 @media(max-width: 520px) {
     .pokemon_card_detailed {
         width: 400px;
+    }
+
+    .detailed_information_content_container {
+        height: 197px;
+        gap: 8px;
+    }
+
+    .evo_chain_container {
+        height: 197px;
     }
 }
 

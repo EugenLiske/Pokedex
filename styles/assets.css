@@ -94,3 +94,18 @@
     background-color: rgb(228, 31, 27);      /* dunkleres Rot bei Hover */
     transform: scale(1.05);                  /* leichtes "Pop" beim Hover */
 }
+
+.load_pokemon_button_disabled {
+    background-color: #aaa;                /* Grau für deaktivierten Zustand */
+    color: #eee;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    pointer-events: none;                  /* Verhindert jegliche Interaktion */
+}
+
+.load_pokemon_button_disabled:hover {
+    background-color: #aaa;
+    transform: none;
+    box-shadow: none;
+}

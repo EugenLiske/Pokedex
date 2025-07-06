@@ -34,7 +34,6 @@ async function fetchAndDisplayPokemon(start, end){
 
 async function loadAndRenderSinglePokemon(pokemonIndex, container) {
     const response = await fetch(BASE_URL + pokemonIndex);
-    console.log(response);
     checkForErrors(response);
     const data = await response.json();
     container.innerHTML += createMinicardTemplate(data, pokemonIndex);
@@ -82,6 +81,7 @@ async function renderDetailedCardView(pokemonIndex){
         console.error(error);
         alert("Ups, da ist wohl etwas schief gelaufen.");
     }
+    updateLeftButtonState(pokemonIndex);
 }
 
 // create the detailed card
