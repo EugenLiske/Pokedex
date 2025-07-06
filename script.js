@@ -1,7 +1,7 @@
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
 const BASE_URL_EVO_CHAIN = "https://pokeapi.co/api/v2/pokemon-species/";
 let currentPokemonIndex = 1;
-let amountOfLoadedPokemon = 50;
+let amountOfLoadedPokemon = 20;
 let shownPokemonDataArray = [];
 
 // loading pokemon - at the start and when pressing the loading button
@@ -34,6 +34,7 @@ async function fetchAndDisplayPokemon(start, end){
 
 async function loadAndRenderSinglePokemon(pokemonIndex, container) {
     const response = await fetch(BASE_URL + pokemonIndex);
+    console.log(response);
     checkForErrors(response);
     const data = await response.json();
     container.innerHTML += createMinicardTemplate(data, pokemonIndex);
