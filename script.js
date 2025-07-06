@@ -88,10 +88,7 @@ async function renderDetailedCardView(pokemonIndex){
 
 function renderSingleDetailedCard(pokemonResponseAsJson, pokemonIndex){
     let preparationsResults = prepareDetailedCardTemplate(pokemonResponseAsJson);
-    let typeIconsHTML = preparationsResults.typeIconsHTML;
-    let imgSrc = preparationsResults.imgSrc;
-    let abilitiesHTML = preparationsResults.abilitiesHTML;
-    return buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, typeIconsHTML, imgSrc, abilitiesHTML);
+    return buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, preparationsResults);
 }
 
 // prepare type icons, images and abilities for the detailed card

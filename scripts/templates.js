@@ -23,7 +23,7 @@ function buildRawTemplateMinicard(pokemonResponseAsJson, imgSrc, typeIconsHTML, 
 
 // build the raw template for the detailed cards
 
-function buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, typeIconsHTML, imgSrc, abilitiesHTML){
+function buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, preparationsResults){
     return `
     <div class="pokemon_card_detailed">
             <div class="card_header_detailed">
@@ -45,14 +45,14 @@ function buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, typeI
             onload="adjustImageSize(event, 350)"
             id="card_image_detailed_${pokemonIndex}"
             class="card_image_detailed"
-            src="${imgSrc}"
+            src="${preparationsResults.imgSrc}"
             alt="${pokemonResponseAsJson.name}">
 
             <div class="nav_arrow left_arrow" id="left_arrow_button_${pokemonIndex}" onclick="displayPreviousPokemon(${pokemonIndex - 1})"></div>
             <div class="nav_arrow right_arrow" onclick="displayNextPokemon(${pokemonIndex + 1})"></div>
         </div>
         <div id="type_area_detailed_${pokemonIndex}" class="type_area_detailed">
-            ${typeIconsHTML}
+            ${preparationsResults.typeIconsHTML}
         </div>
         <div class="detailed_information_header">
             <div class="more_stats_button" onclick="renderMainStats(${pokemonIndex})">main</div>
@@ -76,7 +76,7 @@ function buildRawTemplateDetailedCard(pokemonResponseAsJson, pokemonIndex, typeI
             </div>
             <div class="info_row_mainstats">
                 <span class="info_label_mainstats">Abilities:</span>
-                <span class="info_value_mainstats">${abilitiesHTML}</span>
+                <span class="info_value_mainstats">${preparationsResults.abilitiesHTML}</span>
             </div>
         </div>
     </div>
